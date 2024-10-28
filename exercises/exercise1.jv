@@ -35,7 +35,7 @@ pipeline PipelineAirport {
 		file: "./airports.sqlite";
 	}
 
-    ExtractorAirports
+    ExtractAirports
 	    -> TextFileInterpreterAirports
 		-> CSVInterpreterAirports
 	   	-> TableInterpreterAirports
