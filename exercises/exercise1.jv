@@ -15,6 +15,7 @@ pipeline AirportsPipeline {
 		delimiter: ';';
 	}
 
+
     block AirportsTableInterpreter oftype ColumnDeleter {
        delete: [column Zeitzone,
                 column DST,
