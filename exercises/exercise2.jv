@@ -1,0 +1,55 @@
+pipeline AirportsPipeline{
+
+    block AirportsExtractor oftype HttpExtractor {
+
+		
+		url: "https://opendata.rhein-kreis-neuss.de/api/v2/catalog/datasets/stadt-neuss-herbstpflanzung-2023/exports/csv";
+	}
+
+    block AirportsTextFileInterpreter oftype TextFileInterpreter { }
+
+    block AirportsCSVInterpreter oftype CSVInterpreter {
+		delimiter: ';';
+	}
+
+    block AirportColumnDeleter oftype ColumnDeleter {
+        delete: [column E];
+    }
+
+    block AirportsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"lfd_nr" oftype integer,
+			"stadtteil" oftype filtercol,
+			"standort" oftype text,
+			"baumart_botanisch" oftype text,
+			"id" oftype text,
+			"baumfamilie" oftype text,
+		];
+    }
+
+    valuetype filtercol oftype text{
+        constraints:[
+            CointainsVogelsang
+        ];
+    }
+
+    constraint CointainsVogelsang on text:
+        value matches ^Vogelsang\w* ;
+
+
+    
+
+    block AirportsLoader oftype SQLiteLoader {
+		table: "trees";
+		file: "./trees.sqlite";
+	}
+    
+
+    AirportsExtractor 
+        ->AirportsTextFileInterpreter
+        -> AirportsCSVInterpreter
+        -> AirportColumnDeleter
+        -> AirportsTableInterpreter
+        -> AirportsLoader;
+}
