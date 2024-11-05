@@ -31,11 +31,11 @@ pipeline AirportsPipeline{
 
     valuetype filtercol oftype text{
         constraints:[
-            CointainsFurth 
+            CointainsVogelsang 
         ];
     }
 
-    constraint CointainsFurth on text:
+    constraint CointainsVogelsang on text:
         value matches /^Vogelsang/ ;
 
     
