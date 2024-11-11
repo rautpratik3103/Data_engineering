@@ -15,7 +15,6 @@ class DataProcessing:
         current_dir = os.path.dirname(os.path.abspath(__file__))
         base_path = os.path.abspath(os.path.join(current_dir, os.pardir))
         self.data_path = os.path.join(base_path, 'data')
-        database_file_path = os.path.join(self.data_path, 'database.csv')
         database_name = 'Data.sqlite'
         self.db_path = os.path.join(self.data_path, database_name)
 
