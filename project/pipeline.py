@@ -34,6 +34,28 @@ class DataProcessing:
     def delete_file(self, file_path):
         os.remove(file_path)
 
+    def unemployement_data_transform(self,new_dataset_name):
+        data = pd.read_csv(fr"{self.data_path}/{new_dataset_name}")
+        data = data.dropna()
+        unemployment_data = data.copy(deep=True)
+        unemployment_data.rename(columns={'date':'Date'}, inplace=True)
+        unemployment_data["Date"] = pd.to_datetime(unemployment_data["Date"]).dt.date
+        conn = sqlite3.connect(self.db_path)
+        unemployment_data.to_sql('unemployement_data', conn, index=False, if_exists='replace')
+
+    def crime_data_transform(self,new_dataset_name):
+        data = pd.read_csv(fr"{self.data_path}/{new_dataset_name}")
+        data = data.dropna()
+        cols_to_keep = ['Date Rptd', 'DATE OCC', 'AREA NAME', 'Part 1-2', 'Crm Cd Desc', 'Vict Age', 'Vict Sex',
+                        'Premis Desc', 'Weapon Desc', 'LOCATION']
+        crime_data = data[cols_to_keep].copy(deep=True)
+
+        crime_data["Date Rptd"] = pd.to_datetime(crime_data["Date Rptd"]).dt.date
+        crime_data["DATE OCC"] = pd.to_datetime(crime_data["DATE OCC"]).dt.date
+
+        conn = sqlite3.connect(self.db_path)
+        crime_data.to_sql('crime_data', conn, index=False, if_exists='replace')
+
     def get_data_from_kaggle(self, file_name, new_name, kaggle_file_path):
         file_name = file_name
         new_dataset_name = new_name
@@ -45,6 +67,15 @@ class DataProcessing:
                 self.remove_dir(fr"{self.data_path}/temp")
                 self.delete_file(fr"{self.data_path}/{file_name}.zip")
             self.rename_files(fr"{self.data_path}/{file_name}", fr"{self.data_path}/{new_dataset_name}")
+
+            if file_name == "Crime_Data_from_2020_to_Present.csv":
+                self.crime_data_transform(new_dataset_name)
+
+            elif file_name == "unemployed_population_1978-12_to_2023-07.csv":
+                self.unemployement_data_transform(new_dataset_name)
+
+
+
         else:
             print(fr"File Already Exists {new_dataset_name}")
 
