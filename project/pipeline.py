@@ -40,6 +40,7 @@ class DataProcessing:
         unemployment_data = data.copy(deep=True)
         unemployment_data.rename(columns={'date':'Date'}, inplace=True)
         unemployment_data["Date"] = pd.to_datetime(unemployment_data["Date"]).dt.date
+        unemployment_data = unemployment_data[pd.to_datetime(unemployment_data["Date"]).dt.date >= pd.to_datetime("2020-01-01").date()]
         conn = sqlite3.connect(self.db_path)
         unemployment_data.to_sql('unemployement_data', conn, index=False, if_exists='replace')
 
@@ -49,6 +50,8 @@ class DataProcessing:
         cols_to_keep = ['Date Rptd', 'DATE OCC', 'AREA NAME', 'Part 1-2', 'Crm Cd Desc', 'Vict Age', 'Vict Sex',
                         'Premis Desc', 'Weapon Desc', 'LOCATION']
         crime_data = data[cols_to_keep].copy(deep=True)
+        crime_data = crime_data[pd.to_datetime(crime_data["DATE OCC"]).dt.date >= pd.to_datetime("2020-01-01").date()]
+
 
         crime_data["Date Rptd"] = pd.to_datetime(crime_data["Date Rptd"]).dt.date
         crime_data["DATE OCC"] = pd.to_datetime(crime_data["DATE OCC"]).dt.date
