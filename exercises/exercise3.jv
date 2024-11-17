@@ -54,13 +54,6 @@ pipeline ExercisethreePipeline {
     ];
   }
 
-  block gdpdelete oftype ColumnDeleter {
-   delete: [column C];
-  }
-
-  block bonddelete oftype ColumnDeleter {
-   delete: [column D];
-  }
 
 
 
