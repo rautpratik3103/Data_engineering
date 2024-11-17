@@ -40,7 +40,6 @@ pipeline ExercisethreePipeline {
     header: true;
     columns: [
       "Country Code" oftype CountryCodeAlpha3,
-      "Economy" oftype text,
        "Bond Issuance Share" oftype between_0_and_1
     ];
   }
@@ -49,7 +48,6 @@ pipeline ExercisethreePipeline {
     header: true;
     columns: [
       "Country Code" oftype CountryCodeAlpha3,
-      "Economy" oftype text,
        "GDP per Capita" oftype greater_zero,
     ];
   }
