@@ -52,10 +52,6 @@ pipeline ExercisethreePipeline {
     ];
   }
 
-
-
-
-
   block countrystatsCellsLoader oftype SQLiteLoader {
     table: "bondIssuance";
     file: "./country-stats.sqlite";
@@ -66,8 +62,6 @@ pipeline ExercisethreePipeline {
     file: "./country-stats.sqlite";
   }
 
-  // 4.2 Here, we pick another sheet named 'Wavelength thickness trapping' from the Workbook
-  
   CellsExtractor
     -> CellsTextXLSXInterpreter
     -> CellsSheetpicker
@@ -76,10 +70,7 @@ pipeline ExercisethreePipeline {
     -> bondissuanceTableInterpreter
     -> countrystatsCellsLoader;
 
-  
   DataSelector
   ->gdpaTableInterpreter
   -> gdpcapitaCellsLoader;
-
-  
 }
