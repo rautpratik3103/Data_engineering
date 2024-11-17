@@ -1,0 +1,94 @@
+pipeline ExercisethreePipeline {
+  block CellsExtractor oftype HttpExtractor {
+    url: "https://thedocs.worldbank.org/en/doc/7d852628d96b9411d43e5d36d5dff941-0050062022/original/Graphs-Chapter-5-02082022.xlsx";
+  }
+  block CellsTextXLSXInterpreter oftype XLSXInterpreter { }
+
+  block CellsSheetpicker oftype SheetPicker {
+    sheetName: 'Figure S5.1.2';
+  }
+
+  block NameHeaderWriter oftype CellWriter {
+    at: range P2:S2;
+    write: [
+      "Country Code",
+      "Economy",
+       "GDP per Capita",
+       "Bond Issuance Share"
+    ];
+  }
+
+  block DataSelector oftype CellRangeSelector {
+        select: range P2:S*;
+    }
+
+  valuetype greater_zero oftype decimal {
+        constraints: [greater_than_zero];
+    }
+
+    constraint greater_than_zero on decimal:
+        value > 0;
+
+   valuetype between_0_and_1 oftype decimal{
+        constraints:[between_0_and_1_c];
+   }
+   constraint between_0_and_1_c on decimal:
+        value >= 0 and value <= 1;
+
+
+  block bondissuanceTableInterpreter oftype TableInterpreter {
+    header: true;
+    columns: [
+      "Country Code" oftype CountryCodeAlpha3,
+      "Economy" oftype text,
+       "Bond Issuance Share" oftype between_0_and_1
+    ];
+  }
+
+  block gdpaTableInterpreter oftype TableInterpreter {
+    header: true;
+    columns: [
+      "Country Code" oftype CountryCodeAlpha3,
+      "Economy" oftype text,
+       "GDP per Capita" oftype greater_zero,
+    ];
+  }
+
+  block gdpdelete oftype ColumnDeleter {
+   delete: [column C];
+  }
+
+  block bonddelete oftype ColumnDeleter {
+   delete: [column D];
+  }
+
+
+
+
+  block countrystatsCellsLoader oftype SQLiteLoader {
+    table: "bondIssuance";
+    file: "./country-stats..sqlite";
+  }
+
+  block gdpcapitaCellsLoader oftype SQLiteLoader {
+    table: "gdpPerCapita";
+    file: "./country-stats..sqlite";
+  }
+
+  // 4.2 Here, we pick another sheet named 'Wavelength thickness trapping' from the Workbook
+  
+  CellsExtractor
+    -> CellsTextXLSXInterpreter
+    -> CellsSheetpicker
+    -> NameHeaderWriter
+    ->DataSelector
+    -> bondissuanceTableInterpreter
+    -> countrystatsCellsLoader;
+
+  
+  DataSelector
+  ->gdpaTableInterpreter
+  -> gdpcapitaCellsLoader;
+
+  
+}
