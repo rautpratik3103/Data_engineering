@@ -40,7 +40,7 @@ pipeline ExercisethreePipeline {
     header: true;
     columns: [
       "Country Code" oftype CountryCodeAlpha3,
-       "Bond Issuance Share" oftype between_0_and_1
+      "Bond Issuance Share" oftype between_0_and_1
     ];
   }
 
@@ -58,12 +58,12 @@ pipeline ExercisethreePipeline {
 
   block countrystatsCellsLoader oftype SQLiteLoader {
     table: "bondIssuance";
-    file: "./country-stats..sqlite";
+    file: "./country-stats.sqlite";
   }
 
   block gdpcapitaCellsLoader oftype SQLiteLoader {
     table: "gdpPerCapita";
-    file: "./country-stats..sqlite";
+    file: "./country-stats.sqlite";
   }
 
   // 4.2 Here, we pick another sheet named 'Wavelength thickness trapping' from the Workbook
